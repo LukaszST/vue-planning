@@ -1,48 +1,32 @@
 <template>
     <div id="app">
+        {{this.$store.state.cards}}
         <div class="col-md-12">
-            <div class="container">
-                <div class="col-md-2" v-for="(item, index) in cards">
-                    <div class="card">
-                        <div class="card-block">
-                            <h1>{{item.value}}</h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <PokerCard
+              v-for="(item, index) in pokerCards"
+              :item="item"
+              :index="index"
+              key="index"
+            />
         </div>
-        <Cards
-            v-for="(item, index) in cards"
-            :item="item"
-            :index="index"
-            key="index"
-        />
     </div>
 </template>
 
 <script>
-import Cards from './components/Cards.vue'
+import PokerCard from './components/PokerCard.vue'
 
 export default {
-    data() {
-        return {
-            cards: {}
-        }
-    },
-    methods: {
-      fetchCards() {
-        fetch('http://pokerplanning.dev/api/available-scrum-points', {
-          method: 'GET'
-        })
-          .then(response => response.json())
-          .then(json => this.cards = json)
-      }
-    },
-    created: function () {
-        this.fetchCards()
-    },
-    components: {
-      Cards
+  name: 'app',
+  computed: {
+    pokerCards () {
+      return this.$store.getters.pokerCards
     }
+  },
+  beforeCreate () {
+    this.$store.dispatch('fetchCards')
+  },
+  components: {
+    'PokerCard': PokerCard
+  }
 }
 </script>
